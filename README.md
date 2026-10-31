@@ -65,3 +65,7 @@ git clone https://github.com/anaslari23/verify-before-done.git ~/.claude/skills/
 - **Claude.ai / Desktop:** zip the `verify-before-done` folder and upload it under Settings → Capabilities → Skills.
 - Paths vary by tool version; check your tool's skills docs if one doesn't load.
 - To update later: `git -C <install path> pull`.
+
+## License
+
+MIT, see [LICENSE](LICENSE).

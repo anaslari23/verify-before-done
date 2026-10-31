@@ -1,6 +1,7 @@
 ---
 name: verify-before-done
-description: Enforces that any coding, debugging, or configuration task is actually run and verified before it can be reported as complete. Use this for EVERY code change, bug fix, feature implementation, refactor, or config edit — not just when the user asks for testing. Trigger it silently on any task where you are about to write, edit, or generate code, scripts, Odoo/ERP modules, API integrations, or infrastructure config. If you catch yourself about to say "this should work," "I've implemented X," or hand the task back without having actually executed something, that is the signal this skill exists to block. Applies whether or not the user explicitly asked for tests.
+description: Requires execution evidence before any code, bug fix, refactor or config change is reported complete. Use on every task that writes or edits code, scripts, API integrations, ERP/Odoo modules or infrastructure config, whether or not tests were requested. Captures a baseline, runs the changed path, compares before and after, checks regressions, and reports real command output plus anything unverified. Blocks "this should work" claims made without running anything.
+license: MIT
 ---
 
 # Verify Before Done
