@@ -1,16 +1,52 @@
 # verify-before-done
 
-Forces the agent to actually run and verify any code, bug fix, or config change before reporting it complete.
+> "Done" has to be earned with execution evidence, not asserted.
 
-The skill itself is `SKILL.md`. Keep the folder together and named `verify-before-done`.
+An agent skill that stops the most common failure in AI coding: writing code, explaining why it *should* work, and handing it back without ever running it.
+
+## What it does
+
+Makes a task incomplete until the agent has shown real command output proving the change works, compared against the behaviour before.
+
+| Stage | What the agent must do |
+|-------|------------------------|
+| 1. Baseline | Reproduce the bug / capture current behaviour first |
+| 2. Implement | Keep the diff scoped |
+| 3. Execute | Run the exact code path that changed, not a neighbour |
+| 4. Compare | State before → after in one line |
+| 5. Regression | Run the cheap broader checks (tests, lint, types) |
+| 6. Report | Commands run, real output, and anything left **unverified** |
+
+It also lists hard-stop conditions (no command run since last edit, "should work" phrasing, a failing test ignored, shared code tested at one call site only) and a fast path so typo fixes don't need a full test run.
+
+## When it triggers
+
+Any code change, bug fix, feature, refactor, script, API integration, ERP/Odoo module, or infrastructure config edit, whether or not you asked for tests.
+
+## Example
+
+Without the skill: *"I've fixed the null reference; it should now work."*
+
+With it:
+
+```
+Before: AttributeError: 'NoneType' object has no attribute 'partner_id'
+Ran:    pytest tests/test_order.py -q
+After:  3 passed. Order confirms, partner_id populated.
+Not verified: payment gateway (no sandbox credentials here).
+```
+
+## Files
+
+- `SKILL.md`: the whole skill, no extra dependencies.
 
 ## Install
-
-Clone once, then copy (or symlink) into the skills directory of your tool.
 
 ```bash
 git clone https://github.com/anaslari23/verify-before-done.git
 ```
+
+Copy the `verify-before-done` folder into your tool's skills directory, then restart it or open a new session.
 
 | Tool | Global (all projects) | Project only |
 |------|----------------------|--------------|
@@ -19,33 +55,13 @@ git clone https://github.com/anaslari23/verify-before-done.git
 | Cursor | `~/.cursor/skills/verify-before-done/` | `.cursor/skills/verify-before-done/` |
 | Antigravity | `~/.gemini/antigravity/skills/verify-before-done/` | `.agent/skills/verify-before-done/` |
 
-### Claude Code
+One-liner (Claude Code, global):
+
 ```bash
-mkdir -p ~/.claude/skills && cp -R verify-before-done ~/.claude/skills/
+git clone https://github.com/anaslari23/verify-before-done.git ~/.claude/skills/verify-before-done
 ```
 
-### Codex
-```bash
-mkdir -p ~/.codex/skills && cp -R verify-before-done ~/.codex/skills/
-```
-
-### Cursor
-```bash
-mkdir -p ~/.cursor/skills && cp -R verify-before-done ~/.cursor/skills/
-```
-On older Cursor versions without Agent Skills, paste `SKILL.md` into a rule at `.cursor/rules/verify-before-done.mdc`.
-
-### Antigravity
-```bash
-mkdir -p ~/.gemini/antigravity/skills && cp -R verify-before-done ~/.gemini/antigravity/skills/
-```
-For one workspace only, copy to `<project>/.agent/skills/` instead.
-
-### Claude.ai / Claude Desktop
-Zip the `verify-before-done` folder and upload it under Settings → Capabilities → Skills.
-
-Restart the tool (or start a new session) after installing. Skill paths vary between tool versions; if yours differs, check its skills documentation.
-
-## Usage
-
-Skills load automatically when your request matches the `description` in the `SKILL.md` frontmatter. You can also ask for it by name (`verify-before-done`).
+- **Cursor without Agent Skills:** paste `SKILL.md` into `.cursor/rules/verify-before-done.mdc`.
+- **Claude.ai / Desktop:** zip the `verify-before-done` folder and upload it under Settings → Capabilities → Skills.
+- Paths vary by tool version; check your tool's skills docs if one doesn't load.
+- To update later: `git -C <install path> pull`.
